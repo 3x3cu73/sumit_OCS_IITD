@@ -8,3 +8,13 @@ phpMyAdmin : http://52.172.200.10/phpMyAdmin/
 
 # API
 ![image](https://github.com/user-attachments/assets/2b39068b-ec01-42d3-9791-27a157ba3311)
+
+
+
+#Description  
+App is hosted on a Virtual Machine (Microsft Azure Student Subscription)  
+
+Frontend is being served by Apache 2 .   
+Api Endpoint is managed by FastAPI .  
+
+Apache as well as Fastapi is behind Nginx Reverse Proxy Server.  
