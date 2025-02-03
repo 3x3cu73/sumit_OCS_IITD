@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+      <div class="col-md-6 col-lg-4">
+        <div class="card shadow-lg">
+          <div class="card-body p-5">
+            <h3 class="text-center mb-4">Login</h3>
+            <form class="form">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input name="username" type="text" class="form-control" id="username" aria-describedby="username">
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input name="password" type="password" class="form-control" id="password">
+              </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Submit</button>
+
+              </div>
+            </form>
+            <div>
+
+              <button id="mdlbtn" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#exampleModalCenter" hidden>
+              </button>
+
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModalCenter" tabindex="-1" aria-labelledby="exampleModalCenterTitle"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content" >
+                    <div class="modal-body">
+
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalCenterTitle">Information</h5>
+                      
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                    </div> 
+                    <div id="confirm" class="modal-body">
+                      <div id="error" class="text-danger" color="red"></div>
+                      <div id="success" class="text-success" color="green"></div>
+                      <br>
+                    </div>    
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="./js/md5.min.js"></script>
+
+<script>
+
+  const formEl = document.querySelector('.form');
+
+  formEl.addEventListener('submit', event => {
+    event.preventDefault();
+    const passwordField = document.getElementById('password');
+    var tmp = passwordField.value;
+    passwordField.value = md5(passwordField.value);
+    const formData = new FormData(formEl);
+    const data = new URLSearchParams(formData);
+    passwordField.value = tmp;
+
+    fetch(`http://52.172.200.10/api/ocs/login?${data.toString()}`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(response => {
+
+
+        var err = document.getElementById('error');
+        err.innerHTML = ""
+
+        var succ = document.getElementById('success');
+        succ.innerHTML = "Successful"
+
+
+        console.log(response);
+        var role = response.cur_role;
+        var users = response.all_users;
+        console.log(users);
+        var tables = document.querySelectorAll('table');
+
+        tables.forEach(table => {
+          table.remove();
+        });
+        console.log("Trying", response.status)
+        let table = document.createElement('table');
+        table.className = 'table table-hover table-bordered table-responsive';
+
+        for (let row of users) {
+          table.insertRow();
+          for (let cell of row) {
+            let newCell = table.rows[table.rows.length - 1].insertCell()
+            newCell.textContent = cell;
+          }
+        }
+
+        // Create container with Bootstrap classes
+        const container = document.createElement('div');
+
+        // Add Bootstrap table classes
+        table.className = 'table table-striped table-bordered table-hover';
+
+        // Add table wrapper for responsiveness
+        const tableWrapper = document.createElement('div');
+        tableWrapper.className = 'table-responsive';
+        tableWrapper.appendChild(table);
+        container.appendChild(tableWrapper);
+
+        // Insert at the beginning of body
+        const confirmDiv = document.getElementById('confirm');
+        confirmDiv.insertBefore(container, confirmDiv.firstChild);
+
+
+        document.getElementById("mdlbtn").click()
+
+      })
+      .catch(error => {
+        console.log(error);
+        var err = document.getElementById('error');
+        err.innerHTML = "Invalid Credentials"
+        // alert("Invalid Credentials");
+        var succ = document.getElementById('success');
+        succ.innerHTML = ""
+        document.getElementById("mdlbtn").click()
+
+      });
+  });
+
+</script>
+
+</html>
