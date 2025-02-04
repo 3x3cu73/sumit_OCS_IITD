@@ -1,7 +1,10 @@
 # OCS App (Hosted on an Ubuntu Virtual Machine)
 
 Input form  
-![image](https://github.com/user-attachments/assets/95e385ed-0ea2-48bd-9b02-4ff994bc245b)
+
+
+Uploading ocs.mp4…
+
 
 # If correct user Details  
 ![image](https://github.com/user-attachments/assets/53ebcad2-ffb4-4549-a8f6-ac937f091fc7)
