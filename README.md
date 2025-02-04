@@ -10,7 +10,7 @@ Apache as well as Fastapi is behind Nginx Reverse Proxy Server.
 
 
 Main Page  : http://52.172.200.10/  
-API Endpoint:  http://52.172.200.10/api/ocs/login
+API Endpoint:  http://52.172.200.10/api/ocs/login  
 API List : http://52.172.200.10/api/docs  
 phpMyAdmin : http://52.172.200.10/phpMyAdmin/  
 
