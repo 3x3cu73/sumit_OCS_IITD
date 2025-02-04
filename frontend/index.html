@@ -18,7 +18,7 @@
       <div class="col-md-6 col-lg-4">
         <div class="card shadow-lg">
           <div class="card-body p-5">
-            <h3 class="text-center mb-4">Login</h3>
+            <h3 class="text-center mb-4">OCS Get Details</h3>
             <form class="form">
               <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
@@ -42,21 +42,21 @@
               <!-- Modal -->
               <div class="modal fade" id="exampleModalCenter" tabindex="-1" aria-labelledby="exampleModalCenterTitle"
                 aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                  <div class="modal-content" >
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                  <div class="modal-content">
                     <div class="modal-body">
 
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalCenterTitle">Information</h5>
-                      
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="title">OCS Information </h5>
 
-                    </div> 
-                    <div id="confirm" class="modal-body">
-                      <div id="error" class="text-danger" color="red"></div>
-                      <div id="success" class="text-success" color="green"></div>
-                      <br>
-                    </div>    
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                      </div>
+                      <div id="confirm" class="modal-body">
+                        <div id="error" class="text-danger" color="red"></div>
+                        <div id="success" class="text-success" color="green"></div>
+                        <br>
+                      </div>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -87,74 +87,108 @@
     const formData = new FormData(formEl);
     const data = new URLSearchParams(formData);
     passwordField.value = tmp;
-
-    fetch(`http://52.172.200.10/api/ocs/login?${data.toString()}`, {
-      method: 'POST',
+    fetch(`http://52.172.200.10/api/health`, {
+      method: 'GET',
       headers: {
         'Accept': 'application/json'
       }
     })
       .then(res => res.json())
       .then(response => {
+        fetch(`http://52.172.200.10/api/ocs/login?${data.toString()}`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json'
+          }
+        })
+          .then(res => res.json())
+          .then(response => {
 
 
-        var err = document.getElementById('error');
-        err.innerHTML = ""
+            var err = document.getElementById('error');
+            err.innerHTML = ""
 
-        var succ = document.getElementById('success');
-        succ.innerHTML = "Successful"
+            var succ = document.getElementById('success');
+            succ.innerHTML = "Successful"
 
 
-        console.log(response);
-        var role = response.cur_role;
-        var users = response.all_users;
-        console.log(users);
+            console.log(response);
+            var role = response.cur_role;
+            var users = response.all_users;
+            console.log(users);
+            var tables = document.querySelectorAll('table');
+
+            tables.forEach(table => {
+              table.remove();
+            });
+            console.log("Trying", response.status)
+            let table = document.createElement('table');
+            table.className = 'table table-hover table-bordered table-responsive';
+            if (response.detail == "404: Invalid credentials") {
+              var err = document.getElementById('error');
+              err.innerHTML = "Invalid Credentials";
+              // alert("Invalid Credentials");
+              var succ = document.getElementById('success');
+              succ.innerHTML = ""
+              document.getElementById("mdlbtn").click()
+
+            }
+            else {
+
+
+              for (let row of users) {
+                table.insertRow();
+                for (let cell of row) {
+                  let newCell = table.rows[table.rows.length - 1].insertCell()
+                  newCell.textContent = cell;
+                }
+              }
+
+              // Create container with Bootstrap classes
+              const container = document.createElement('div');
+
+              // Add Bootstrap table classes
+              table.className = 'table table-striped table-bordered table-hover';
+
+              // Add table wrapper for responsiveness
+              const tableWrapper = document.createElement('div');
+              tableWrapper.className = 'table-responsive';
+              tableWrapper.appendChild(table);
+              container.appendChild(tableWrapper);
+
+              // Insert at the beginning of body
+              const confirmDiv = document.getElementById('confirm');
+              confirmDiv.insertBefore(container, confirmDiv.firstChild);
+
+
+              document.getElementById("mdlbtn").click()
+            }
+          })
+          .catch(error => {
+            console.log(error);
+            var err = document.getElementById('error');
+            err.innerHTML = error
+            // alert("Invalid Credentials");
+            var succ = document.getElementById('success');
+            succ.innerHTML = ""
+            document.getElementById("mdlbtn").click()
+
+          });
+
+      })
+      .catch(error => {
+        console.log(error);
         var tables = document.querySelectorAll('table');
 
         tables.forEach(table => {
           table.remove();
         });
-        console.log("Trying", response.status)
-        let table = document.createElement('table');
-        table.className = 'table table-hover table-bordered table-responsive';
-
-        for (let row of users) {
-          table.insertRow();
-          for (let cell of row) {
-            let newCell = table.rows[table.rows.length - 1].insertCell()
-            newCell.textContent = cell;
-          }
-        }
-
-        // Create container with Bootstrap classes
-        const container = document.createElement('div');
-
-        // Add Bootstrap table classes
-        table.className = 'table table-striped table-bordered table-hover';
-
-        // Add table wrapper for responsiveness
-        const tableWrapper = document.createElement('div');
-        tableWrapper.className = 'table-responsive';
-        tableWrapper.appendChild(table);
-        container.appendChild(tableWrapper);
-
-        // Insert at the beginning of body
-        const confirmDiv = document.getElementById('confirm');
-        confirmDiv.insertBefore(container, confirmDiv.firstChild);
-
-
-        document.getElementById("mdlbtn").click()
-
-      })
-      .catch(error => {
-        console.log(error);
         var err = document.getElementById('error');
-        err.innerHTML = "Invalid Credentials"
+        err.innerHTML = "API is down"
         // alert("Invalid Credentials");
         var succ = document.getElementById('success');
         succ.innerHTML = ""
         document.getElementById("mdlbtn").click()
-
       });
   });
 
