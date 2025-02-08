@@ -1,7 +1,7 @@
 
 # OCS App (Hosted on an Ubuntu Virtual Machine)
 
-Website : http://sumitsaw.tech
+Website : http://vps.sumitsaw.tech
 
 # Description  
 App is hosted on a Ubuntu Virtual Machine (Microsft Azure Student Subscription).  
