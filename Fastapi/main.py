@@ -7,7 +7,7 @@ from mysql.connector import pooling
 import hashlib
 from datetime import datetime
 
-# Pydantic models for request/response validation
+# Pydantic Model
 class UserBase(BaseModel):
     userid: str
     role: str
@@ -42,7 +42,7 @@ def get_db_cursor():
         yield cursor
         connection.commit()
     except Exception as e:
-        connection.rollback()
+        
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
@@ -88,7 +88,7 @@ def login(username: str, password: str):
                     all_users=UserService.get_all_users(cursor),
                     status="Success"
                 )
-            elif role:
+            elif role=="basic":
                 return UserResponse(
                     cur_role="basic",
                     all_users=UserService.get_user_data(cursor, username),
